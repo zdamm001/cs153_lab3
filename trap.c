@@ -77,6 +77,16 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
+  case T_PGFLT:
+    if (allocuvm(myproc()->pgdir, PGROUNDDOWN(rcr2()), PGROUNDDOWN(rcr2()) + PGSIZE) != 0) {
+      cprintf("Increased stack size.\n");
+    }
+    else {
+      cprintf("Page fault!\n");
+      exit();
+    }
+    break;
+
 
   //PAGEBREAK: 13
   default:
